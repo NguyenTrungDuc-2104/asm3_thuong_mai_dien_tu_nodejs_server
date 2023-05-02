@@ -1,0 +1,7 @@
+{
+  "env": {
+    "MONGODB_USER": "mongodb_nodejs",
+    "MONGODB_PASSWORD": "trungduc2104",
+    "MONGODB_DEFAULT_DATABASE": "asm3"
+  }
+}
