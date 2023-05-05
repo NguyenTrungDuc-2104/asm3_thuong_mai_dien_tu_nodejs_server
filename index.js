@@ -4,8 +4,8 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
+const MongoDBStore = require("connect-mongodb-session")(session);
 
-const store = require("./middleware/store_sesion");
 const productRouter = require("./routers/productRouter");
 const userRouter = require("./routers/userRouter");
 
@@ -19,7 +19,12 @@ app.use(
     credentials: true,
   })
 );
-
+const store = new MongoDBStore({
+  uri: MONGODB_URI,
+  collection: "sessions",
+  autoRemove: "interval",
+  autoRemoveInterval: 1000 * 60 * 60,
+});
 app.use(bodyParser.json());
 
 app.use(cookieParser());

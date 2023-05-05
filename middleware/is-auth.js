@@ -1,14 +1,19 @@
-const store = require("../middleware/store_sesion");
+const Session = require("../models/session");
 
-const isAuth = () => {
+const isAuth = async (req, res, next) => {
   const sessionId = req.cookies.sessionId;
-  store.get(sessionId, (err, session) => {
-    if (err) {
-      console.log(err);
-    } else {
-      console.log(session);
+  try {
+    const session = await Session.findOne({ _id: sessionId });
+    if (!session) {
+      const error = new Error("Not authenticated");
+      error.statusError = 401;
+      throw error;
     }
-  });
+    req.userId = session.session.user._id;
+    next();
+  } catch (err) {
+    next(err);
+  }
 };
 
 module.exports = isAuth;
