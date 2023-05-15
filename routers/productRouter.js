@@ -2,9 +2,13 @@ const express = require("express");
 const { body } = require("express-validator");
 const router = express.Router();
 const isAuth = require("../middleware/is-auth");
+const isRole = require("../middleware/is-role");
+const multer = require("../middleware/multer_image");
 const productController = require("../controllers/product");
 
-//-------------------home-------------------------
+//=======================user==============================
+
+//-------------------get products-------------------------
 router.get("/get_products", productController.getHomeProducts);
 //-------------------shop--------------------------
 router.get("/get_products/:shopType", productController.getShopProducts);
@@ -38,4 +42,21 @@ router.post(
   ],
   productController.postOrder
 );
+//----------------------------------get orders--------------------------
+router.get("/get_orders", isAuth, productController.getOrders);
+//-----------------------------get detail orders------------------------
+router.get("/get_order/:orderId", isAuth, productController.getDetailOrder);
+
+//=================================admin================================
+//-------------------------get dashboard------------------------
+router.get("/admin/get_dashboard", productController.getDashboard);
+//------------------------post new product----------------------
+router.post(
+  "/admin/post_product",
+  isAuth,
+  isRole.admin,
+  multer,
+  productController.potsProduct
+);
+
 module.exports = router;

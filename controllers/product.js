@@ -16,13 +16,11 @@ const transport = nodemailer.createTransport(
   })
 );
 
-//-------------------get home products-------------
+//-------------------get products-------------
 exports.getHomeProducts = async (req, res, next) => {
-  const perPage = 8;
-
   try {
     const totalProduct = await Product.countDocuments();
-    const products = await Product.find({}).limit(perPage);
+    const products = await Product.find({});
     res.status(200).json({ products, totalProduct });
   } catch (err) {
     next(err);
@@ -76,7 +74,7 @@ exports.addToCart = async (req, res, next) => {
     }
     const user = await User.findById(req.userId);
     await user.addToCart(product, quantity);
-    res.status(201).json({ message: "add to cart successful" });
+    res.status(201).json({ message: "Add to cart successful" });
   } catch (err) {
     next(err);
   }
@@ -104,7 +102,7 @@ exports.changeCart = async (req, res, next) => {
   try {
     const user = await User.findById(req.userId);
     await user.changeCart(type, productId);
-    res.status(201).json({ message: "change cart successful" });
+    res.status(201).json({ message: "Change cart successful" });
   } catch (err) {
     next(err);
   }
@@ -154,6 +152,8 @@ exports.postOrder = async (req, res, next) => {
         phoneNumber,
         address,
       },
+      delivery: "Waiting for progressing",
+      status: "Waiting for pay",
     });
     await order.save();
     await user.clearCart();
@@ -207,8 +207,50 @@ exports.postOrder = async (req, res, next) => {
       subject: "Order succeeded",
       html: html,
     });
-    res.status(201).json({ message: "order successful" });
+    res.status(201).json({ message: "Order successful" });
   } catch (err) {
     next(err);
   }
+};
+//---------------------------------get orders----------------------
+exports.getOrders = async (req, res, next) => {
+  try {
+    const order = await Order.find({ "user.userId": req.userId }).select(
+      "user total delivery status "
+    );
+    res.status(200).json({ orders: order });
+  } catch (err) {
+    next(err);
+  }
+};
+//-----------------------------get detail orders--------------------
+exports.getDetailOrder = async (req, res, next) => {
+  const orderId = req.params.orderId;
+
+  try {
+    const order = await Order.findById(orderId);
+    res.status(200).json(order);
+  } catch (err) {
+    next(err);
+  }
+};
+
+//-----------------------------get dashboard--------------------------
+exports.getDashboard = async (req, res, next) => {
+  try {
+    const countUser = await User.countDocuments({ role: "customer" });
+    const countNewOrder = await Order.countDocuments({
+      delivery: "Waiting for progressing",
+    });
+    const order = await Order.find({});
+
+    res.status(200).json({ order, countUser, countNewOrder });
+  } catch (err) {
+    next(err);
+  }
+};
+//-----------------------------post new product--------------------------
+exports.potsProduct = async (req, res, next) => {
+  const imgs = req.files;
+  console.log(imgs);
 };

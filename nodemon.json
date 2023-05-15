@@ -2,6 +2,8 @@
   "env": {
     "MONGODB_USER": "mongodb_nodejs",
     "MONGODB_PASSWORD": "trungduc2104",
-    "MONGODB_DEFAULT_DATABASE": "asm3"
+    "MONGODB_DEFAULT_DATABASE": "asm3",
+    "DOMAIN_CLIENT": "http://localhost:3000",
+    "DOMAIN_ADMIN": "http://localhost:3001"
   }
 }

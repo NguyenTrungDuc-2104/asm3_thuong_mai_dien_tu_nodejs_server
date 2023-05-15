@@ -1,4 +1,5 @@
 const User = require("../models/user");
+const Session = require("../models/session");
 const bcryptjs = require("bcryptjs");
 const { validationResult } = require("express-validator");
 
@@ -8,10 +9,11 @@ exports.register = async (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
   const phoneNumber = req.body.phoneNumber;
-  const isAdmin = req.body.isAdmin;
+  const role = req.body.role;
 
   const errorValidate = validationResult(req);
   try {
+    //-------------------------kiểm tra đầu vào----------------------
     if (!errorValidate.isEmpty()) {
       //--------------email exists-------------
       if (
@@ -25,16 +27,17 @@ exports.register = async (req, res, next) => {
       //------------
       const error = new Error("Validation failed");
       error.statusError = 422;
-      // console.log(errorValidate.array());
       throw error;
     }
+    //---------------------băm password-------------------
     const hashedPassword = await bcryptjs.hash(password, 12);
+    //----------------lưu vào mongoodb--------------------
     const user = new User({
       name,
       email,
       password: hashedPassword,
       phoneNumber,
-      isAdmin,
+      role,
       cart: { items: [] },
     });
 
@@ -55,6 +58,8 @@ exports.login = async (req, res, next) => {
 
   const errorValidate = validationResult(req);
   try {
+    //--------------------------------kiểm tra đầu vào---------------------------
+
     if (!errorValidate.isEmpty()) {
       if (errorValidate.array()[0].msg === "Email does not exists") {
         return res.status(202).json({ message: errorValidate.array()[0].msg });
@@ -64,8 +69,8 @@ exports.login = async (req, res, next) => {
       error.statusError = 422;
       throw error;
     }
-
-    const user = await User.findOne({ email: email, isAdmin: false });
+    //-------------------------tìm kiếm email và so sánh password-----------------------
+    const user = await User.findOne({ email: email });
     const doMatch = await bcryptjs.compare(password, user.password);
 
     if (!doMatch) {
@@ -75,9 +80,17 @@ exports.login = async (req, res, next) => {
     req.session.user = user;
     await req.session.save();
     res.cookie("sessionId", req.session.id, { maxAge: 1000 * 60 * 60 * 24 });
-    res
-      .status(200)
-      .json({ message: "Logged in successfully", userId: user._id });
+    res.status(200).json({ message: "Logged in successfully", user: user });
+  } catch (err) {
+    next(err);
+  }
+};
+
+//-----------------------------logout----------------------------
+exports.logout = async (req, res, next) => {
+  try {
+    await Session.findByIdAndRemove(req.sessionId);
+    res.status(200).json({ message: "Logout success" });
   } catch (err) {
     next(err);
   }

@@ -10,6 +10,7 @@ const isAuth = async (req, res, next) => {
       throw error;
     }
     req.userId = session.session.user._id;
+    req.sessionId = sessionId;
     next();
   } catch (err) {
     next(err);
