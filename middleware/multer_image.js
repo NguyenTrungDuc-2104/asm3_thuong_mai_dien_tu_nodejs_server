@@ -1,13 +1,5 @@
 const multer = require("multer");
 
-//-------check folder------
-const fs = require("fs");
-const path = require("path");
-const imgFolder = path.join(path.dirname(require.main.filename), "images");
-if (!fs.existsSync(imgFolder)) {
-  fs.mkdirSync(imgFolder);
-}
-
 //--------------------read img from request-------------
 const fileStorage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -32,4 +24,4 @@ const fileFilter = (req, file, cb) => {
 module.exports = multer({
   storage: fileStorage,
   fileFilter: fileFilter,
-}).array("images", 5);
+}).array("images", 4);

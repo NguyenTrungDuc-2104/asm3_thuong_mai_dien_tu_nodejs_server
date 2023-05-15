@@ -1,4 +1,6 @@
 const express = require("express");
+const path = require("path");
+const fs = require("fs");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const bodyParser = require("body-parser");
@@ -27,8 +29,13 @@ const store = new MongoDBStore({
   autoRemoveInterval: 1000 * 60 * 60,
 });
 app.use(bodyParser.json());
-
 app.use(cookieParser());
+
+const imgFolder = path.join(__dirname, "images");
+if (!fs.existsSync(imgFolder)) {
+  fs.mkdirSync(imgFolder);
+}
+app.use("/images", express.static(path.join(__dirname, "images")));
 
 app.use(
   session({

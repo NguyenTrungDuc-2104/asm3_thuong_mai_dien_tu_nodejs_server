@@ -56,7 +56,48 @@ router.post(
   isAuth,
   isRole.admin,
   multer,
+  [
+    body("images").custom((value, { req }) => {
+      if (req.files && req.files.length === 4) {
+        return true;
+      }
+      throw new Error("Please choose 4 images");
+    }),
+    body("name", "Please enter the product name").trim().notEmpty(),
+    body("category", "Please enter the category").trim().notEmpty(),
+    body("price", "Please enter the price").trim().notEmpty(),
+    body("short_desc", "Please enter the short description").trim().notEmpty(),
+    body("long_desc", "Please enter the long description").trim().notEmpty(),
+  ],
   productController.potsProduct
 );
 
+//----------------get update product-----------------
+router.get(
+  "/admin/get_product/:detailId",
+  isAuth,
+  isRole.admin,
+  productController.getDetailProducts
+);
+//------------------patch update product--------------
+router.patch(
+  "/admin/update-product",
+  isAuth,
+  isRole.admin,
+  [
+    body("name", "Please enter the product name").trim().notEmpty(),
+    body("category", "Please enter the category").trim().notEmpty(),
+    body("price", "Please enter the price").trim().notEmpty(),
+    body("short_desc", "Please enter the short description").trim().notEmpty(),
+    body("long_desc", "Please enter the long description").trim().notEmpty(),
+  ],
+  productController.patchUpdateProduct
+);
+//------------------delete product--------------
+router.delete(
+  "/admin/delete_product/:productId",
+  isAuth,
+  isRole.admin,
+  productController.deleteProduct
+);
 module.exports = router;

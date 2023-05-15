@@ -1,7 +1,9 @@
 const { validationResult } = require("express-validator");
+const path = require("path");
 const Product = require("../models/product");
 const User = require("../models/user");
 const Order = require("../models/order");
+const fileHelper = require("../utils/file");
 
 const nodemailer = require("nodemailer");
 const sendgridTransport = require("nodemailer-sendgrid-transport");
@@ -54,6 +56,7 @@ exports.getDetailProducts = async (req, res, next) => {
       throw error;
     }
     const relatedProducts = await Product.find({
+      _id: { $ne: detailId },
       category: product.category,
     }).select("img1 name price");
     res.status(200).json({ product, relatedProducts });
@@ -251,6 +254,98 @@ exports.getDashboard = async (req, res, next) => {
 };
 //-----------------------------post new product--------------------------
 exports.potsProduct = async (req, res, next) => {
-  const imgs = req.files;
-  console.log(imgs);
+  const name = req.body.name;
+  const price = req.body.price;
+  const category = req.body.category;
+  const short_desc = req.body.short_desc;
+  const long_desc = req.body.long_desc;
+  const images = req.files;
+  const domain = req.get("host");
+  const errors = validationResult(req);
+
+  try {
+    if (!errors.isEmpty()) {
+      const error = new Error(errors.array()[0].msg);
+      error.statusError = 422;
+      throw error;
+    }
+    const imageURL = images.map((item) => {
+      return "http://" + domain + "/" + item.path.replace("\\", "/");
+    });
+    const [img1, img2, img3, img4] = imageURL;
+
+    const product = new Product({
+      name,
+      price,
+      category,
+      short_desc,
+      long_desc,
+      img1,
+      img2,
+      img3,
+      img4,
+    });
+    await product.save();
+    res.status(201).json({ message: "Add new product success" });
+  } catch (err) {
+    next(err);
+  }
+};
+
+//------------------------------update product---------------------
+exports.patchUpdateProduct = async (req, res, next) => {
+  const productId = req.body.productId;
+  const updateName = req.body.name;
+  const updateCategory = req.body.category;
+  const updatePrice = req.body.price;
+  const updateShort_desc = req.body.short_desc;
+  const updateLong_desc = req.body.long_desc;
+  const errors = validationResult(req);
+
+  try {
+    const product = await Product.findById(productId);
+    if (!product) {
+      const error = new Error("Not found");
+      error.statusError = 404;
+      throw error;
+    }
+    if (!errors.isEmpty()) {
+      const error = new Error(errors.array()[0].msg);
+      error.statusError = 422;
+      throw error;
+    }
+    product.name = updateName;
+    product.category = updateCategory;
+    product.price = updatePrice;
+    product.short_desc = updateShort_desc;
+    product.long_desc = updateLong_desc;
+
+    await product.save();
+    res.status(201).json({ message: "Update product success", product });
+  } catch (err) {
+    next(err);
+  }
+};
+//------------------------------delete product---------------------
+exports.deleteProduct = async (req, res, next) => {
+  const productId = req.params.productId;
+  try {
+    const product = await Product.findById(productId);
+    if (!product) {
+      const error = new Error("Not found");
+      error.statusError = 404;
+      throw error;
+    }
+
+    const imagArr = [product.img1, product.img2, product.img3, product.img4];
+    imagArr.forEach((item) => {
+      const imgName = item.split("/")[4];
+      const imgPath = path.join("images", imgName);
+      fileHelper.deleteFile(imgPath);
+    });
+    await Product.findByIdAndRemove(productId);
+    res.status(200).json({ message: "Delete product success" });
+  } catch (err) {
+    next(err);
+  }
 };
