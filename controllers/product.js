@@ -12,8 +12,7 @@ const transport = nodemailer.createTransport(
   sendgridTransport({
     auth: {
       // api_user: "nguyentrungduc2104@gmail.com",
-      api_key:
-        "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",
+      api_key: process.env.API_KEY_SENDGRID,
     },
   })
 );
@@ -130,9 +129,8 @@ exports.postOrder = async (req, res, next) => {
   const total = req.body.total;
   const errorValidate = validationResult(req);
   try {
+    //----------check validate---------
     if (!errorValidate.isEmpty()) {
-      console.log(errorValidate.array()[0]);
-
       const error = new Error("Validation failed");
       error.statusError = 422;
       throw error;
@@ -142,9 +140,17 @@ exports.postOrder = async (req, res, next) => {
       "cart.items.product",
       "category img1 name price"
     );
+
     const products = user.cart.items.map((prod) => {
       return { product: { ...prod.product._doc }, quantity: prod.quantity };
     });
+    //-------------------change count product-----------
+    for (let item of products) {
+      const prod = await Product.findById(item.product._id);
+      prod.count = prod.count - item.quantity;
+      await prod.save();
+    }
+    //---------------------------save order------------------
     const order = new Order({
       products: products,
       total: total,
@@ -159,7 +165,9 @@ exports.postOrder = async (req, res, next) => {
       status: "Waiting for pay",
     });
     await order.save();
-    await user.clearCart();
+    user.clearCart();
+
+    //----------------------------send email--------------------
     const producsHtml = products
       .map((prod) => {
         return ` 
@@ -210,6 +218,7 @@ exports.postOrder = async (req, res, next) => {
       subject: "Order succeeded",
       html: html,
     });
+    //-------------------------
     res.status(201).json({ message: "Order successful" });
   } catch (err) {
     next(err);

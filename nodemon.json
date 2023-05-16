@@ -4,6 +4,7 @@
     "MONGODB_PASSWORD": "trungduc2104",
     "MONGODB_DEFAULT_DATABASE": "asm3",
     "DOMAIN_CLIENT": "http://localhost:3000",
-    "DOMAIN_ADMIN": "http://localhost:3001"
+    "DOMAIN_ADMIN": "http://localhost:3001",
+    "API_KEY_SENDGRID": "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"
   }
 }
