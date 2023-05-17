@@ -2,6 +2,8 @@ const Session = require("../models/session");
 
 const isAuth = async (req, res, next) => {
   const sessionId = req.cookies.sessionId;
+  console.log(sessionId);
+  
   try {
     const session = await Session.findOne({ _id: sessionId });
     if (!session) {
