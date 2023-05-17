@@ -90,6 +90,8 @@ exports.login = async (req, res, next) => {
 //-----------------------------logout----------------------------
 exports.logout = async (req, res, next) => {
   try {
+    console.log(req.sessionId);
+
     await Session.findByIdAndRemove(req.sessionId);
     res.status(200).json({ message: "Logout success" });
   } catch (err) {
