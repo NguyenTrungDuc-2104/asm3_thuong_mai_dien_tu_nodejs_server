@@ -30,7 +30,7 @@ const store = new MongoDBStore({
   autoRemoveInterval: 1000 * 60 * 60,
 });
 app.use(bodyParser.json());
-// app.use(cookieParser());
+app.use(cookieParser());
 
 const imgFolder = path.join(__dirname, "images");
 if (!fs.existsSync(imgFolder)) {
