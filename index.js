@@ -30,7 +30,7 @@ const store = new MongoDBStore({
   autoRemoveInterval: 1000 * 60 * 60,
 });
 app.use(bodyParser.json());
-app.use(cookieParser());
+// app.use(cookieParser());
 
 const imgFolder = path.join(__dirname, "images");
 if (!fs.existsSync(imgFolder)) {
@@ -48,7 +48,6 @@ app.use(
       maxAge: 1000 * 60 * 60 * 24,
       secure: true,
       sameSite: "none",
-      domain: "fantastic-croquembouche-789160.netlify.app",
     },
   })
 );

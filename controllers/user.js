@@ -80,7 +80,7 @@ exports.login = async (req, res, next) => {
     req.session.user = user;
     await req.session.save();
 
-    res.cookie("sessionId", req.session.id, { maxAge: 1000 * 60 * 60 * 24 });
+    // res.cookie("sessionId", req.session.id, { maxAge: 1000 * 60 * 60 * 24 });
     res.status(200).json({ message: "Logged in successfully", user: user });
   } catch (err) {
     next(err);

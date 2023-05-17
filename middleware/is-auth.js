@@ -2,7 +2,7 @@ const Session = require("../models/session");
 
 const isAuth = async (req, res, next) => {
   const sessionId = req.cookies.sessionId;
-  console.log(req.cookies);
+  console.log(req.cookies.connect.sid);
 
   try {
     const session = await Session.findOne({ _id: sessionId });
