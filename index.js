@@ -48,7 +48,6 @@ app.use(
       maxAge: 1000 * 60 * 60 * 24,
       secure: true,
       sameSite: "lax",
-      domain: "fantastic-croquembouche-789160.netlify.app",
     },
   })
 );
