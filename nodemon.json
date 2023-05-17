@@ -5,6 +5,6 @@
     "MONGODB_DEFAULT_DATABASE": "asm3",
     "DOMAIN_CLIENT": "http://localhost:3000",
     "DOMAIN_ADMIN": "http://localhost:3001",
-    "API_KEY_SENDGRID": "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"
+    "API_KEY_SENDGRID": "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"
   }
 }

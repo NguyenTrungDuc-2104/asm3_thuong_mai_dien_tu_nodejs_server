@@ -11,7 +11,6 @@ const sendgridTransport = require("nodemailer-sendgrid-transport");
 const transport = nodemailer.createTransport(
   sendgridTransport({
     auth: {
-      // api_user: "nguyentrungduc2104@gmail.com",
       api_key: process.env.API_KEY_SENDGRID,
     },
   })
@@ -230,6 +229,7 @@ exports.getOrders = async (req, res, next) => {
     const order = await Order.find({ "user.userId": req.userId }).select(
       "user total delivery status "
     );
+
     res.status(200).json({ orders: order });
   } catch (err) {
     next(err);
@@ -265,6 +265,7 @@ exports.getDashboard = async (req, res, next) => {
 exports.potsProduct = async (req, res, next) => {
   const name = req.body.name;
   const price = req.body.price;
+  const count = req.body.count;
   const category = req.body.category;
   const short_desc = req.body.short_desc;
   const long_desc = req.body.long_desc;
@@ -286,6 +287,7 @@ exports.potsProduct = async (req, res, next) => {
     const product = new Product({
       name,
       price,
+      count,
       category,
       short_desc,
       long_desc,
@@ -307,6 +309,7 @@ exports.patchUpdateProduct = async (req, res, next) => {
   const updateName = req.body.name;
   const updateCategory = req.body.category;
   const updatePrice = req.body.price;
+  const updateCount = req.body.count;
   const updateShort_desc = req.body.short_desc;
   const updateLong_desc = req.body.long_desc;
   const errors = validationResult(req);
@@ -326,6 +329,7 @@ exports.patchUpdateProduct = async (req, res, next) => {
     product.name = updateName;
     product.category = updateCategory;
     product.price = updatePrice;
+    product.count = updateCount;
     product.short_desc = updateShort_desc;
     product.long_desc = updateLong_desc;
 
