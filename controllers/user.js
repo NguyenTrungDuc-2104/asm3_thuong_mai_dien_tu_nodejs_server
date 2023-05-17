@@ -51,14 +51,14 @@ exports.register = async (req, res, next) => {
   }
 };
 
-//-----------------------------login----------------------------
+//---------------------------------------------login---------------------------------------
 exports.login = async (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
 
   const errorValidate = validationResult(req);
   try {
-    //--------------------------------kiểm tra đầu vào---------------------------
+    //-----------------------kiểm tra đầu vào---------------------------
 
     if (!errorValidate.isEmpty()) {
       if (errorValidate.array()[0].msg === "Email does not exists") {
@@ -79,6 +79,8 @@ exports.login = async (req, res, next) => {
 
     req.session.user = user;
     await req.session.save();
+    console.log(req.session.id);
+
     res.cookie("sessionId", req.session.id, { maxAge: 1000 * 60 * 60 * 24 });
     res.status(200).json({ message: "Logged in successfully", user: user });
   } catch (err) {
