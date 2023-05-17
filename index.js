@@ -16,7 +16,7 @@ const MONGODB_URI = `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MON
 
 const app = express();
 
-app.use("trust proxy", 1);
+app.set("trust proxy", 1);
 app.use(
   cors({
     origin: [process.env.DOMAIN_CLIENT, process.env.DOMAIN_ADMIN],
