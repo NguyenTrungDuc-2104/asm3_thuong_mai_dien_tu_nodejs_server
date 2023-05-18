@@ -250,7 +250,9 @@ exports.getDetailOrder = async (req, res, next) => {
 //-----------------------------get dashboard--------------------------
 exports.getDashboard = async (req, res, next) => {
   try {
-    const countUser = await User.countDocuments({ role: "customer" });
+    const countUser = await User.countDocuments({
+      $or: [{ role: "customer" }, { role: "seller" }],
+    });
     const countNewOrder = await Order.countDocuments({
       delivery: "Waiting for progressing",
     });
