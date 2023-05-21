@@ -72,7 +72,6 @@ mongoose
       socket.on("create_room", (conversationId) => {
         socket.join(conversationId);
       });
-
       socket.on("leave_room", (conversationId) => {
         socket.leave(conversationId);
       });

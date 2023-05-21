@@ -57,7 +57,7 @@ exports.postMessage = async (req, res, next) => {
     });
     await message.save();
     const dataSocket = await message.populate("sender");
-    io.getIo().to(conversationId.toString()).emit("send_message", dataSocket);
+    io.getIo().to(conversationId).emit("send_message", dataSocket);
     return res.status(201).json({ message, roomId: conversationId });
   } catch (err) {
     next(err);
