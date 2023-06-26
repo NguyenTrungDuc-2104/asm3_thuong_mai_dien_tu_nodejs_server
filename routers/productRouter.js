@@ -89,7 +89,7 @@ router.patch(
     body("name", "Please enter the product name").trim().notEmpty(),
     body("category", "Please enter the category").trim().notEmpty(),
     body("price", "Please enter the price").trim().notEmpty(),
-    body("price", "Please enter the count").trim().notEmpty(),
+    body("count", "Please enter the count").trim().notEmpty(),
     body("short_desc", "Please enter the short description").trim().notEmpty(),
     body("long_desc", "Please enter the long description").trim().notEmpty(),
   ],
