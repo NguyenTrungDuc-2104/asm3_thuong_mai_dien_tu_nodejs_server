@@ -10,6 +10,6 @@ II. Hướng dẫn
 - MONGODB_USER: <tên user của tài khoản moongodb>
 - MONGODB_PASSWORD: <password của user> 
 - MONGODB_DEFAULT_DATABASE: <tên database>
-- DOMAIN_CLIENT: <URL website clinet>
-- DOMAIN_ADMIN: <URL website admin>
+- DOMAIN_CLIENT: <URL của website clinet>
+- DOMAIN_ADMIN: <URL của website admin>
 - API_KEY_SENDGRID: <api key của sendgrid>
